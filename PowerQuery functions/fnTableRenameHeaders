@@ -1,0 +1,8 @@
+    fnTableRenameHeaders = (tbl as table) as table =>
+    let
+        OriginalColumnNames = Table.ColumnNames(tbl),
+        NewColumnNames = List.Transform(OriginalColumnNames, each  _ & "_test"),
+        ReplacementList = List.Zip({OriginalColumnNames, NewColumnNames}),
+        result = Table.RenameColumns(tbl, ReplacementList)
+    in
+        result,
