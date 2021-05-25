@@ -1,0 +1,7 @@
+(tbl as table, value as any) as table => 
+    let
+        listPosition = List.PositionOf(tbl[Column1], value), 
+        rows = if listPosition = -1 then 0 else listPosition,
+        result = Table.Skip(tbl, rows)
+    in
+      result
