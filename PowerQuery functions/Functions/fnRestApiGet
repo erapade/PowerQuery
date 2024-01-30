@@ -1,0 +1,24 @@
+let
+  Source = (api_method as text) =>
+    let
+      uri = peakon_api_url & api_method,
+      get_data = (uri) =>
+        let
+          uri2 = Text.AfterDelimiter(uri, peakon_api_url, 0),
+          headers   = [Authorization = "Bearer " & token],
+          source    = Json.Document(Web.Contents(peakon_api_url, [RelativePath=uri2, Headers = headers])),
+          data      = source[data],
+          next_page = try source[links][next] otherwise null
+        in
+          [Data = data, NextPage = next_page],
+      firstPage = get_data(uri),
+      segments =
+        if firstPage[NextPage] <> null then
+          List.Generate(() => get_data(uri), each [NextPage] <> null, each get_data([NextPage]))
+        else
+          {firstPage},
+      result = List.Combine(List.Transform(segments, each [Data]))
+    in
+      result
+in
+  Source
